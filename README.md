@@ -97,6 +97,15 @@ Save operations also return *true* when successful: `success = jupiter.save(data
 Non Sequiturs and Caveats
 -------------------------
 
+Jupiter will **always** attempt to *tonumber* a given index/key or value, including sub indexes/keys. So:
+
+> 1=Number index!<br />
+1A=String index!<br />
+1 =Strng index!<br />
+Number value=1234567890
+
+Although boolean *true* values are stored, when reloaded they will be a string. This is not a problem, however, since lua is flexible and still returns true when tested.
+
 The following table assignments are not compatible with Jupiter's functions:
     
     --reference loop
@@ -114,6 +123,10 @@ Jupiter uses the pattern `"^(..-)=(.+)$"` to find variable assignments. If your 
 The *saveDir* directory is created on the first `jupiter.load` call if it does not already exist.
 
 Since Jupiter uses the [love.filesystem][2] module files are **always** stored in the [user save directory][3]. Files are also loaded from here, although if they are not found LÖVE will look inside the boot directory (which contains your main.lua).
+
+######Etymology
+
+The name Jupiter was chosen because the library pertains to file i/o, and Io just happens to be a Jovian satellite. I made a pun! Oh dear.
 
 [1]: http://love2d.org/ "LÖVE"
 [2]: http://love2d.org/wiki/love%2efilesystem "love.filesystem documentation"
