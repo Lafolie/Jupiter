@@ -59,6 +59,7 @@ jupiter.load = function(name)
 					local element = scope:match("^(..-)%.") --get the leftmost index
 					scope = scope:match("^" .. element .. "%.(.+)") --trim the current index for the next iteration
 					if not pointer[element] then pointer[element] = {} end --create the table if needed
+					element = tonumber(element) and tonumber(element) or element
 					pointer = pointer[element] --set the pointer to the current level
 				end
 				return scope
@@ -70,6 +71,7 @@ jupiter.load = function(name)
 				if k and v then
 					local index = deserial(k)
 					if v ~= "nil" and v ~= "false" then --ignore nil values that may have been set by the player
+						index = tonumber(index) and tonumber(index) or index
 						pointer[index] = tonumber(v) and tonumber(v) or v
 					end
 				end
