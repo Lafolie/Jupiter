@@ -56,10 +56,11 @@ jupiter.load = function(name)
 				pointer = saveFile
 				local scope, dotCount = value:gsub("%.", "%1")
 				for x = 1, dotCount do
+					print(scope)
 					local element = scope:match("^(..-)%.") --get the leftmost index
 					scope = scope:match("^" .. element .. "%.(.+)") --trim the current index for the next iteration
-					pointer[element] = not pointer[element] and {} or pointer[element] --create the table if needed
 					element = tonumber(element) and tonumber(element) or element
+					pointer[element] = not pointer[element] and {} or pointer[element] --create the table if needed
 					pointer = pointer[element] --set the pointer to the current level
 				end
 				return scope
