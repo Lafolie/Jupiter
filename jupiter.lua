@@ -28,15 +28,15 @@ end
 
 --load a file. If no specific file is given it returns the latest save file
 jupiter.load = function(name)
-	if not love.filesystem.isDirectory("save") then assert(love.filesystem.mkdir("save"), "Unable to create save directory in " .. love.filesystem.getSaveDirectory() .. "!") end
+	if not love.filesystem.isDirectory(jupiter.saveDir) then assert(love.filesystem.mkdir(jupiter.saveDir), "Unable to create save directory in " .. love.filesystem.getSaveDirectory() .. "!") end
 	--load the latest save file if no file is given (useful for 'continue' option)
 	if not name then
-		local saveFiles = love.filesystem.enumerate("save")
+		local saveFiles = love.filesystem.enumerate(jupiter.saveDir)
 		local orderedFiles = {}
 		for k, file in ipairs(saveFiles) do
 			--ignore files such as .DS_Store
 			if not (file:sub(1, 1) == ".") and file:match("%.save$") then
-				table.insert(orderedFiles, {f = file, t = love.filesystem.getLastModified("save/" .. file) or 0})
+				table.insert(orderedFiles, {f = file, t = love.filesystem.getLastModified(jupiter.saveDir .. "/" .. file) or 0})
 			end
 		end
 		if # orderedFiles ~= 0 then
@@ -51,12 +51,10 @@ jupiter.load = function(name)
 			local saveFile = {} --data from the file
 			local pointer
 			--find tables
-			--ASSUME: key.up
 			local function deserial(value)
 				pointer = saveFile
 				local scope, dotCount = value:gsub("%.", "%1")
 				for x = 1, dotCount do
-					print(scope)
 					local element = scope:match("^(..-)%.") --get the leftmost index
 					scope = scope:match("^" .. element .. "%.(.+)") --trim the current index for the next iteration
 					element = tonumber(element) and tonumber(element) or element
