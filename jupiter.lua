@@ -3,14 +3,14 @@ local jupiter = {saveDir = "save"}
 
 jupiter.save = function(data)
 	assert(type(data) == "table", "Tables must be provided to saveFile!")
-	if not love.filesystem.isDirectory(jupiter.saveDir) then assert(love.filesystem.mkdir(jupiter.saveDir), "Unable to create save directory in " .. love.filesystem.getSaveDirectory() .. "!") end --make the save folder if required
+	if not love.filesystem.isDirectory(jupiter.saveDir) then assert(love.filesystem.createDirectory(jupiter.saveDir), "Unable to create save directory in " .. love.filesystem.getSaveDirectory() .. "!") end --make the save folder if required
 	file = love.filesystem.newFile(data._fileName)
 	file:open("w")
-	
+
 	local function serial(table, scope)
 		scope = scope or ""
 		for k, v in pairs(table) do
-			if k ~= "_fileName" then 
+			if k ~= "_fileName" then
 				if type(v) == "table" then
 					serial(v, scope .. tostring(k) .. ".")
 				else
@@ -22,16 +22,16 @@ jupiter.save = function(data)
 	end
 
 	serial(data)
-	
+
 	return true
 end
 
 --load a file. If no specific file is given it returns the latest save file
 jupiter.load = function(name)
-	if not love.filesystem.isDirectory(jupiter.saveDir) then assert(love.filesystem.mkdir(jupiter.saveDir), "Unable to create save directory in " .. love.filesystem.getSaveDirectory() .. "!") end
+	if not love.filesystem.isDirectory(jupiter.saveDir) then assert(love.filesystem.createDirectory(jupiter.saveDir), "Unable to create save directory in " .. love.filesystem.getSaveDirectory() .. "!") end
 	--load the latest save file if no file is given (useful for 'continue' option)
 	if not name then
-		local saveFiles = love.filesystem.enumerate(jupiter.saveDir)
+		local saveFiles = love.filesystem.getDirectoryItems(jupiter.saveDir)
 		local orderedFiles = {}
 		for k, file in ipairs(saveFiles) do
 			--ignore files such as .DS_Store
@@ -63,7 +63,7 @@ jupiter.load = function(name)
 				end
 				return scope
 			end
-			
+
 			--load the data
 			for l in love.filesystem.lines(name) do
 				local k, v = l:match("^(..-)=(.+)$")
